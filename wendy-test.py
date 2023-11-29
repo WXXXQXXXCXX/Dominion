@@ -58,6 +58,32 @@ class DominionGame:
         print(f"Discard count: {len(self.player_discard[player_name])}")
         print("\n")
 
+    def calculate_buying_power(self, player_name):
+        # Count the total value of treasure cards in the player's hand
+        treasure_values = {'copper': 1, 'silver': 2, 'gold': 3}
+        return sum(treasure_values[card] for card in self.player_hand[player_name] if card in treasure_values)
+
+    def buy_cards(self, player_name):
+        buying_power = self.calculate_buying_power(player_name)
+        while buying_power > 0:
+            # Example: Let the player buy a card of their choice that they can afford
+            chosen_card = input(f"{player_name}, choose a card to buy (or 'pass'): ")
+            if chosen_card == 'pass':
+                break
+            if chosen_card in self.supply and self.supply[chosen_card] > 0 and treasure_values[chosen_card] <= buying_power:
+                self.supply[chosen_card] -= 1
+                self.player_discard[player_name].append(chosen_card)
+                buying_power -= treasure_values[chosen_card]
+            else:
+                print("Invalid choice. Try again.")
+
+    def play_turn(self, player_name):
+        self.draw_cards(player_name, 5)
+        self.play_action_phase(player_name)
+        self.buy_cards(player_name)  # Added buy phase
+        self.clean_up(player_name)  # Assuming clean_up is implemented
+
+
 # Usage example:
 if __name__ == "__main__":
     game = DominionGame()
